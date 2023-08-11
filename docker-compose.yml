@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    networks:
+      - internal
+    volumes:
+      - mongodb_data:/data/db
+  likes-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: likes-microservice
+    networks:
+      - internal
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      PORT: ${PORT}
+      MONGODB_URI: mongodb://mongodb:27017/likesDB
+      
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  mongodb_data:
